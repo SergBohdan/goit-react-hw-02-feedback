@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import { GlobalStyle } from '../GlobalStyles';
-
+import { FeedbackOptions } from 'components/Feedback/Feedback';
+import { Statistics } from 'components/Statistics/Statistics';
+import { Section } from 'components/Section/Section';
+import { Notification } from 'components/Notification/Notification';
+import { Container } from './AppStyled';
+import { GlobalStyle } from 'components/GlobalStyles';
 export class App extends Component {
   state = {
     good: 0,
@@ -29,41 +33,39 @@ export class App extends Component {
 
   render() {
     const { good, neutral, bad } = this.state;
+    const total = good + neutral + bad;
+  
+    let statisticsFeedback = null;
+  
+    if (total > 0) {
+      statisticsFeedback = (
+        <Statistics
+          good={this.state.good}
+          neutral={this.state.neutral}
+          bad={this.state.bad}
+          total={this.countTotalFeedback()}
+          percent={this.countPositiveFeedbackPercentage()}
+        />
+      );
+    } else {
+      statisticsFeedback = <Notification message="There is no feedback"/>;
+    }
+  
     return (
-      <div>
-        <h2>Please leave feedback</h2>
-        <button type="button" onClick={() => this.handleIncrement('good')}>
-          good
-        </button>
-        <button type="button" onClick={() => this.handleIncrement('neutral')}>
-          neutral
-        </button>
-        <button type="button" onClick={() => this.handleIncrement('bad')}>
-          bad
-        </button>
-
-        <div>
-          <h2>Statistics</h2>
-          <p>
-            Good: <span>{good}</span>
-          </p>
-
-          <p>
-            Neutral: <span>{neutral}</span>
-          </p>
-          <p>
-            Bad: <span>{bad}</span>
-          </p>
-
-          <p>
-            Total: <span>{this.countTotalFeedback('total')}</span>
-          </p>
-          <p>Positive feedback: <span>{this.countPositiveFeedbackPercentage('percent')}</span></p>
-        </div>
-
+      <Container>
+        <Section title={'Please leave feedback'}>
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.handleIncrement}
+          />
+        </Section>
+  
+        <Section title={'Statistics'}>
+          {statisticsFeedback}
+        </Section>
         <GlobalStyle />
-      </div>
+      </Container>
     );
-  }
-}
+  };
+};
 export default App;
