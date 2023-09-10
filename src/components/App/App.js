@@ -32,24 +32,7 @@ export class App extends Component {
   };
 
   render() {
-    const { good, neutral, bad } = this.state;
-    const total = good + neutral + bad;
-  
-    let statisticsFeedback = null;
-  
-    if (total > 0) {
-      statisticsFeedback = (
-        <Statistics
-          good={this.state.good}
-          neutral={this.state.neutral}
-          bad={this.state.bad}
-          total={this.countTotalFeedback()}
-          percent={this.countPositiveFeedbackPercentage()}
-        />
-      );
-    } else {
-      statisticsFeedback = <Notification message="There is no feedback"/>;
-    }
+    const total = this.countTotalFeedback();
   
     return (
       <Container>
@@ -61,7 +44,17 @@ export class App extends Component {
         </Section>
   
         <Section title={'Statistics'}>
-          {statisticsFeedback}
+          {total > 0 ? (
+            <Statistics
+              good={this.state.good}
+              neutral={this.state.neutral}
+              bad={this.state.bad}
+              total={total}
+              percent={this.countPositiveFeedbackPercentage()}
+            />
+          ) : (
+            <Notification message="There is no feedback" />
+          )}
         </Section>
         <GlobalStyle />
       </Container>
